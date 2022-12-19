@@ -1,4 +1,4 @@
-declare module 'react-ssr-prepass' {
+declare module '@plasmicapp/react-ssr-prepass' {
   type Visitor = (
     element: React.ElementType<any>,
     instance?: React.Component<any, any>
