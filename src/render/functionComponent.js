@@ -29,6 +29,7 @@ import {
   setFirstHook,
   getFirstHook
 } from '../internals'
+import { getComponentName } from '../utils'
 
 const makeFrame = (
   type: ComponentType<DefaultProps> & ComponentStatics,
@@ -59,7 +60,12 @@ const render = (
     )
   } catch (error) {
     if (typeof error.then !== 'function') {
-      throw error
+      console.warn(
+        `PLASMIC: Encountered error when pre-rendering ${getComponentName(
+          type
+        )}: ${error}`
+      )
+      return null
     }
 
     queue.push(makeFrame(type, props, error))
