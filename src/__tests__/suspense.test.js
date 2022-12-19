@@ -386,7 +386,7 @@ describe('renderPrepass', () => {
     })
   })
 
-  describe('lazy components', () => {
+  describe.skip('lazy components', () => {
     it('supports resolving lazy components', () => {
       const value = {}
       const Inner = jest.fn((props) => expect(props.value).toBe(value))

@@ -60,14 +60,15 @@ const render = (
   props: DefaultProps,
   queue: Frame[]
 ): Node => {
-  // Component has previously been fetched successfully,
-  // so create the element with passed props and return it
-  const payload = ((type._payload || type: any): LazyComponentPayload)
-  if (payload._status === 1) {
-    return createElement(payload._result, props)
-  }
-
   return null
+  // // Component has previously been fetched successfully,
+  // // so create the element with passed props and return it
+  // const payload = ((type._payload || type: any): LazyComponentPayload)
+  // if (payload._status === 1) {
+  //   return createElement(payload._result, props)
+  // }
+
+  // return null
 }
 
 export const mount = (
@@ -77,19 +78,19 @@ export const mount = (
 ): Node => {
   // If the component has not been fetched yet, suspend this component
   const payload = ((type._payload || type: any): LazyComponentPayload)
-  if (payload._status <= 0) {
-    queue.push({
-      kind: 'frame.lazy',
-      contextMap: getCurrentContextMap(),
-      contextStore: getCurrentContextStore(),
-      errorFrame: getCurrentErrorFrame(),
-      thenable: resolve(type),
-      props,
-      type
-    })
+  // if (payload._status <= 0) {
+  //   queue.push({
+  //     kind: 'frame.lazy',
+  //     contextMap: getCurrentContextMap(),
+  //     contextStore: getCurrentContextStore(),
+  //     errorFrame: getCurrentErrorFrame(),
+  //     thenable: resolve(type),
+  //     props,
+  //     type
+  //   })
 
-    return null
-  }
+  //   return null
+  // }
 
   return render(type, props, queue)
 }
