@@ -135,9 +135,9 @@ const render = (type: any, instance: any, queue: Frame[]) => {
   } catch (error) {
     if (typeof error.then !== 'function') {
       console.warn(
-        `PLASMIC: Encountered error when pre-rendering ${getComponentName(
+        `PLASMIC: Encountered error when pre-rendering component ${getComponentName(
           type
-        )}: ${error}`
+        )}. This is fine as long as you are not fetching data with @plasmicapp/query inside this component.  Error: ${error}`
       )
       return null
     }
