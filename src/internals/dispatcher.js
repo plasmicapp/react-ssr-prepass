@@ -360,5 +360,7 @@ export const Dispatcher = {
   useEffect: noop,
   // Debugging effect
   useDebugValue: noop,
+  // Don't care about css-in-js
+  useInsertionEffect: noop,
   isPlasmicPrepass: true
 }
