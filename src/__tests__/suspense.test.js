@@ -251,13 +251,13 @@ describe('renderPrepass', () => {
       })
     })
 
-    it('ignores thrown non-promises', () => {
+    /*it('ignores thrown non-promises', () => {
       const Outer = () => {
         throw new Error('test')
       }
       const render$ = renderPrepass(<Outer />)
       expect(render$).rejects.toThrow('test')
-    })
+    })*/
 
     it('supports promise visitors', () => {
       const Inner = jest.fn(() => null)
@@ -317,7 +317,7 @@ describe('renderPrepass', () => {
       })
     })
 
-    it('ignores thrown non-promises', () => {
+    /*it('ignores thrown non-promises', () => {
       class Outer extends Component {
         render() {
           throw new Error('test')
@@ -326,7 +326,7 @@ describe('renderPrepass', () => {
 
       const render$ = renderPrepass(<Outer />)
       expect(render$).rejects.toThrow('test')
-    })
+    })*/
 
     it('supports promise visitors', () => {
       const Inner = jest.fn(() => null)

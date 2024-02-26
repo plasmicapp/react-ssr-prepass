@@ -3,6 +3,7 @@
 import { type Node, type Element } from 'react'
 import type {
   Visitor,
+  ClientReferenceVisitor,
   YieldFrame,
   Frame,
   AbstractElement,
@@ -18,7 +19,9 @@ import {
   getCurrentErrorFrame,
   setCurrentRendererState,
   initRendererState,
-  Dispatcher
+  Dispatcher,
+  readContextValue,
+  setContextValue
 } from './internals'
 
 /** visit() walks all elements (depth-first) and while it walks the
@@ -29,6 +32,7 @@ import {
 const flushFrames = (
   queue: Frame[],
   visitor: Visitor,
+  clientRefVisitor: ClientReferenceVisitor,
   state: RendererState
 ): Promise<void> => {
   const frame = queue.shift()
@@ -45,21 +49,30 @@ const flushFrames = (
   return Promise.resolve(frame.thenable).then(
     () => {
       setCurrentRendererState(state)
-      update(frame, queue, visitor)
-      return flushFrames(queue, visitor, state)
+      update(frame, queue, visitor, clientRefVisitor)
+      return flushFrames(queue, visitor, clientRefVisitor, state)
     },
     (error: Error) => {
       if (!frame.errorFrame) throw error
       frame.errorFrame.error = error
-      update(frame.errorFrame, queue, visitor)
+      update(frame.errorFrame, queue, visitor, clientRefVisitor)
     }
   )
 }
 
 const defaultVisitor = () => undefined
 
-const renderPrepass = (element: Node, visitor?: Visitor): Promise<void> => {
+declare var globalThis: any
+
+let runningPrepassCount = 0
+
+const renderPrepass = (
+  element: Node,
+  visitor?: Visitor,
+  clientRefVisitor?: ClientReferenceVisitor
+): Promise<void> => {
   if (!visitor) visitor = defaultVisitor
+  if (!clientRefVisitor) clientRefVisitor = defaultVisitor
 
   const queue: Frame[] = []
   // Renderer state is kept globally but restored and
@@ -74,12 +87,23 @@ const renderPrepass = (element: Node, visitor?: Visitor): Promise<void> => {
   setCurrentErrorFrame(null)
 
   try {
-    visit(getChildrenArray(element), queue, visitor)
+    runningPrepassCount++
+    globalThis.__ssrPrepassEnv = { readContextValue, setContextValue }
+    visit(getChildrenArray(element), queue, visitor, clientRefVisitor)
   } catch (error) {
+    runningPrepassCount--
+    if (!runningPrepassCount) {
+      delete globalThis.__ssrPrepassEnv
+    }
     return Promise.reject(error)
   }
 
-  return flushFrames(queue, visitor, state)
+  return flushFrames(queue, visitor, clientRefVisitor, state).finally(() => {
+    runningPrepassCount--
+    if (!runningPrepassCount) {
+      delete globalThis.__ssrPrepassEnv
+    }
+  })
 }
 
 export default renderPrepass

@@ -2,9 +2,16 @@
 
 import type { ComponentType } from 'react'
 import type { Identity } from '../internals'
-import type { LazyComponent } from '../types'
 import type { ContextMap, ContextStore, ContextEntry, Hook } from './state'
-import type { AbstractElement, DefaultProps, ComponentStatics } from './element'
+import type {
+  AbstractElement,
+  DefaultProps,
+  ComponentStatics,
+  LazyComponent,
+  ClientReference,
+  ClientReferenceElement
+} from './element'
+import type { ClientReferenceVisitor } from './input'
 
 export type BaseFrame = {
   contextMap: ContextMap,
@@ -46,7 +53,23 @@ export type YieldFrame = BaseFrame & {
   traversalErrorFrame: Array<null | ClassFrame>
 }
 
-export type Frame = ClassFrame | HooksFrame | LazyFrame | YieldFrame
+/** Description of client reference element */
+export type ClientRefFrame = BaseFrame & {
+  kind: 'client-ref',
+  type: ClientReference,
+  props: Object,
+  id: Identity,
+  hook: Hook | null,
+  element: ClientReferenceElement,
+  clientRefVisitor: ClientReferenceVisitor
+}
+
+export type Frame =
+  | ClassFrame
+  | HooksFrame
+  | LazyFrame
+  | YieldFrame
+  | ClientRefFrame
 
 export type RendererState = {|
   uniqueID: number

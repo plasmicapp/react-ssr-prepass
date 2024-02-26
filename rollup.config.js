@@ -75,23 +75,8 @@ const plugins = [
     ecma: 5,
     keep_fnames: true,
     ie8: false,
-    compress: {
-      pure_getters: true,
-      toplevel: true,
-      booleans_as_integers: false,
-      keep_fnames: true,
-      keep_fargs: true,
-      if_return: false,
-      ie8: false,
-      sequences: false,
-      loops: false,
-      conditionals: false,
-      join_vars: false
-    },
-    mangle: {
-      module: true,
-      keep_fnames: true
-    },
+    compress: false,
+    mangle: false,
     output: {
       beautify: true,
       braces: true,

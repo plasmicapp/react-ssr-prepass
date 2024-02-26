@@ -4,7 +4,15 @@ declare module '@plasmicapp/react-ssr-prepass' {
     instance?: React.Component<any, any>
   ) => void | Promise<any>
 
-  function ssrPrepass(node: React.ReactNode, visitor?: Visitor): Promise<void>
+  export type ClientReferenceVisitor = (
+    element: React.ReactElement
+  ) => void | React.ReactNode
+
+  function ssrPrepass(
+    node: React.ReactNode,
+    visitor?: Visitor,
+    clientRefVisitor?: ClientReferenceVisitor
+  ): Promise<void>
 
   export = ssrPrepass
 }

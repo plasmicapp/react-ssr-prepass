@@ -22,3 +22,8 @@ export {
   mount as mountClassComponent,
   update as updateClassComponent
 } from './classComponent'
+
+export {
+  mount as mountClientReference,
+  update as updateClientReference
+} from './clientReference'

@@ -14,6 +14,7 @@ let ForwardRef = 0xead0
 let Suspense = 0xead1
 let Memo = 0xead3
 let Lazy = 0xead4
+let ClientReferenceTag = undefined
 
 if (typeof Symbol === 'function' && Symbol.for) {
   const symbolFor = Symbol.for
@@ -29,6 +30,7 @@ if (typeof Symbol === 'function' && Symbol.for) {
   Suspense = symbolFor('react.suspense')
   Memo = symbolFor('react.memo')
   Lazy = symbolFor('react.lazy')
+  ClientReferenceTag = Symbol.for('react.client.reference')
 }
 
 /** Literal types representing the ReactSymbol values. These values do not actually match the values from react-is! */
@@ -53,8 +55,11 @@ export const REACT_STRICT_MODE_TYPE: 'react.strict_mode' = (StrictMode: any)
 export const REACT_PROFILER_TYPE: 'react.profiler' = (Profiler: any)
 export const REACT_PROVIDER_TYPE: 'react.provider' = (ContextProvider: any)
 export const REACT_CONTEXT_TYPE: 'react.context' = (ContextConsumer: any)
-export const REACT_CONCURRENT_MODE_TYPE: 'react.concurrent_mode' = (ConcurrentMode: any)
+export const REACT_CONCURRENT_MODE_TYPE: 'react.concurrent_mode' =
+  (ConcurrentMode: any)
 export const REACT_FORWARD_REF_TYPE: 'react.forward_ref' = (ForwardRef: any)
 export const REACT_SUSPENSE_TYPE: 'react.suspense' = (Suspense: any)
 export const REACT_MEMO_TYPE: 'react.memo' = (Memo: any)
 export const REACT_LAZY_TYPE: 'react.lazy' = (Lazy: any)
+export const CLIENT_REFERENCE_TAG: 'react.client.reference' =
+  (ClientReferenceTag: any)

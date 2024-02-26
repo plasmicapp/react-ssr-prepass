@@ -161,6 +161,12 @@ export type UserElement = {
   $$typeof: typeof REACT_ELEMENT_TYPE
 }
 
+export type ClientReferenceElement = {
+  type: ClientReference,
+  props: DefaultProps,
+  $$typeof: typeof REACT_ELEMENT_TYPE
+}
+
 /** <div /> */
 export type DOMElement = {
   type: string,
@@ -180,6 +186,7 @@ export type AbstractElement =
   | DOMElement
   | PortalElement
   | SuspenseElement
+  | ClientReferenceElement
 
 export type MutableSourceGetSnapshotFn<
   Source: $NonMaybeType<mixed>,
@@ -193,4 +200,10 @@ export type MutableSourceSubscribeFn<Source: $NonMaybeType<mixed>, Snapshot> = (
 
 export type MutableSource<Source: $NonMaybeType<mixed>> = {
   _source: Source
+}
+
+export type ClientReference = {
+  $$typeof: symbol,
+  $$id: string,
+  $$async: boolean
 }
