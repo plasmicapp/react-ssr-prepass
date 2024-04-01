@@ -135,7 +135,7 @@ describe('visitElement', () => {
     expect(children.length).toBe(0)
   })
 
-  it.skip('resolves lazy components', () => {
+  it('resolves lazy components', () => {
     const defer = jest.fn().mockImplementation(() => {
       return Promise.resolve().then(() => Noop)
     })
