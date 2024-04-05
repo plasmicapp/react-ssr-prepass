@@ -55,6 +55,20 @@ const resolve = (type: LazyComponent): Promise<void> => {
     }))
 }
 
+const makeFrame = (
+  type: LazyComponent,
+  props: DefaultProps,
+  thenable: Promise<any>
+) => ({
+  kind: 'frame.lazy',
+  contextMap: getCurrentContextMap(),
+  contextStore: getCurrentContextStore(),
+  errorFrame: getCurrentErrorFrame(),
+  thenable,
+  props,
+  type
+})
+
 const render = (
   type: LazyComponent,
   props: DefaultProps,
@@ -63,11 +77,18 @@ const render = (
   // Component has previously been fetched successfully,
   // so create the element with passed props and return it
   const payload = ((type._payload || type: any): LazyComponentPayload)
-  if (payload._status === 1) {
+  if (payload._status === 1 && payload._result) {
     return createElement(payload._result, props)
   }
 
-  return null
+  try {
+    return createElement((type: any)._init((type: any)._payload), props)
+  } catch (err) {
+    if (!!err && typeof err.then === 'function') {
+      queue.push(makeFrame(type, props, err))
+    }
+    return null
+  }
 }
 
 export const mount = (
@@ -77,16 +98,12 @@ export const mount = (
 ): Node => {
   // If the component has not been fetched yet, suspend this component
   const payload = ((type._payload || type: any): LazyComponentPayload)
-  if (payload._status <= 0) {
-    queue.push({
-      kind: 'frame.lazy',
-      contextMap: getCurrentContextMap(),
-      contextStore: getCurrentContextStore(),
-      errorFrame: getCurrentErrorFrame(),
-      thenable: resolve(type),
-      props,
-      type
-    })
+  // For lazy components from resolved modules (e.g. Client Components)
+  // The `payload._status` is null.
+  // Reference code for "normal" lazy components: https://github.com/facebook/react/blob/main/packages/react/src/ReactLazy.js#L53
+  // Reference code for Client Component chunks: https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFlightClient.js#L955
+  if (payload._status != null && payload._status <= 0) {
+    queue.push(makeFrame(type, props, resolve(type)))
 
     return null
   }

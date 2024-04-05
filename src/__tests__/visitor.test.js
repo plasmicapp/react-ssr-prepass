@@ -29,6 +29,8 @@ import {
 
 import { visitElement } from '../visitor'
 
+import { REACT_ELEMENT_TYPE, REACT_LAZY_TYPE } from '../symbols'
+
 const { ReactCurrentDispatcher } = (React: any)
   .__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 
@@ -157,6 +159,35 @@ describe('visitElement', () => {
       type: Test,
       props: {}
     })
+  })
+
+  it('resolves lazy components of resolved modules', () => {
+    const ClientComponent = jest.fn().mockReturnValue(null)
+    const queue = []
+    const children = visitElement(
+      {
+        $$typeof: REACT_ELEMENT_TYPE,
+        props: {},
+        key: null,
+        ref: null,
+        type: {
+          $$typeof: REACT_LAZY_TYPE,
+          _payload: {
+            reason: null,
+            status: 'resolved_module',
+            _response: {},
+            _testComponent: ClientComponent
+          },
+          _init: (payload) => payload._testComponent
+        }
+      },
+      queue,
+      () => {}
+    )
+
+    expect(children.length).toBe(1)
+    expect(queue.length).toBe(0)
+    expect(children[0].type).toBe(ClientComponent)
   })
 
   it('walks over forwardRef components', () => {
