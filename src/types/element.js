@@ -14,7 +14,8 @@ import {
   REACT_FORWARD_REF_TYPE,
   REACT_SUSPENSE_TYPE,
   REACT_MEMO_TYPE,
-  REACT_LAZY_TYPE
+  REACT_LAZY_TYPE,
+  REACT_CONSUMER_TYPE
 } from '../symbols'
 
 export type AbstractContext = Context<mixed> & {
@@ -41,7 +42,7 @@ export type ConsumerElement = {
   type:
     | AbstractContext
     | {
-        $$typeof: typeof REACT_CONTEXT_TYPE,
+        $$typeof: typeof REACT_CONSUMER_TYPE,
         _context: AbstractContext
       },
   props: { children?: (value: mixed) => Node },
