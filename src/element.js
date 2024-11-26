@@ -6,6 +6,7 @@ import type { AbstractContext, AbstractElement } from './types'
 import {
   type ReactSymbol,
   REACT_ELEMENT_TYPE,
+  REACT_TRANSITIONAL_ELEMENT_TYPE,
   REACT_PORTAL_TYPE,
   REACT_FRAGMENT_TYPE,
   REACT_STRICT_MODE_TYPE,
@@ -16,7 +17,8 @@ import {
   REACT_FORWARD_REF_TYPE,
   REACT_SUSPENSE_TYPE,
   REACT_MEMO_TYPE,
-  REACT_LAZY_TYPE
+  REACT_LAZY_TYPE,
+  REACT_CONSUMER_TYPE
 } from './symbols'
 
 /** Is a given Component a class component */
@@ -29,6 +31,7 @@ export const typeOf = (x: AbstractElement): ReactSymbol | void => {
     case REACT_PORTAL_TYPE:
       return REACT_PORTAL_TYPE
     case REACT_ELEMENT_TYPE:
+    case REACT_TRANSITIONAL_ELEMENT_TYPE:
       switch (x.type) {
         case REACT_CONCURRENT_MODE_TYPE:
           return REACT_CONCURRENT_MODE_TYPE
@@ -47,8 +50,9 @@ export const typeOf = (x: AbstractElement): ReactSymbol | void => {
               return REACT_LAZY_TYPE
             case REACT_MEMO_TYPE:
               return REACT_MEMO_TYPE
+            case REACT_CONSUMER_TYPE:
+              return REACT_CONSUMER_TYPE
             case REACT_CONTEXT_TYPE:
-              return REACT_CONTEXT_TYPE
             case REACT_PROVIDER_TYPE:
               return REACT_PROVIDER_TYPE
             case REACT_FORWARD_REF_TYPE:

@@ -66,6 +66,7 @@ import {
 
 import {
   REACT_ELEMENT_TYPE,
+  REACT_TRANSITIONAL_ELEMENT_TYPE,
   REACT_PORTAL_TYPE,
   REACT_FRAGMENT_TYPE,
   REACT_STRICT_MODE_TYPE,
@@ -76,7 +77,8 @@ import {
   REACT_FORWARD_REF_TYPE,
   REACT_SUSPENSE_TYPE,
   REACT_MEMO_TYPE,
-  REACT_LAZY_TYPE
+  REACT_LAZY_TYPE,
+  REACT_CONSUMER_TYPE
 } from './symbols'
 
 import { isClientReference } from './utils'
@@ -86,7 +88,19 @@ const REACT_INTERNALS =
   (React: any).__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE
 
 const ReactCurrentDispatcher =
-  REACT_INTERNALS && REACT_INTERNALS.ReactCurrentDispatcher
+  REACT_INTERNALS.ReactCurrentDispatcher || REACT_INTERNALS
+
+const getReactCurrentDispatcher = () => {
+  return ReactCurrentDispatcher.current || ReactCurrentDispatcher.H
+}
+
+const injectReactCurrentDispatcher = (newDispatcher) => {
+  if (ReactCurrentDispatcher.current) {
+    ReactCurrentDispatcher.current = newDispatcher
+  } else {
+    ReactCurrentDispatcher.H = newDispatcher
+  }
+}
 
 // In the presence of setImmediate, i.e. on Node, we'll enable the
 // yielding behavior that gives the event loop a chance to continue
@@ -141,12 +155,14 @@ export const visitElement = (
       const providerElement = ((element: any): ProviderElement)
       // Add provider's value prop to context
       const { value, children } = providerElement.props
-      setContextValue(providerElement.type._context, value)
+      const type = (providerElement.type: any)
+      const context = typeof type._context === 'object' ? type._context : type
+      setContextValue(context, value)
 
       return getChildrenArray(children)
     }
 
-    case REACT_CONTEXT_TYPE: {
+    case REACT_CONSUMER_TYPE: {
       const consumerElement = ((element: any): ConsumerElement)
       const { children } = consumerElement.props
 
@@ -221,11 +237,11 @@ const visitLoop = (
   visitor: Visitor,
   clientRefVisitor: ClientReferenceVisitor
 ): boolean => {
-  const prevDispatcher = ReactCurrentDispatcher.current
+  const prevDispatcher = getReactCurrentDispatcher()
   const start = Date.now()
 
   try {
-    ReactCurrentDispatcher.current = Dispatcher
+    injectReactCurrentDispatcher(Dispatcher)
     while (traversalChildren.length > 0) {
       const element = traversalChildren[traversalChildren.length - 1].shift()
       if (element !== undefined) {
@@ -254,7 +270,7 @@ const visitLoop = (
     queue.unshift(errorFrame)
     return false
   } finally {
-    ReactCurrentDispatcher.current = prevDispatcher
+    injectReactCurrentDispatcher(prevDispatcher)
   }
 }
 
@@ -341,10 +357,10 @@ export const update = (
       )
     }
   } else {
-    const prevDispatcher = ReactCurrentDispatcher.current
+    const prevDispatcher = getReactCurrentDispatcher()
     let children = null
 
-    ReactCurrentDispatcher.current = Dispatcher
+    injectReactCurrentDispatcher(Dispatcher)
 
     try {
       if (frame.kind === 'frame.class') {
@@ -363,7 +379,7 @@ export const update = (
       queue.unshift(errorFrame)
       children = null
     } finally {
-      ReactCurrentDispatcher.current = prevDispatcher
+      injectReactCurrentDispatcher(prevDispatcher)
     }
 
     visit(getChildrenArray(children), queue, visitor, clientRefVisitor)
