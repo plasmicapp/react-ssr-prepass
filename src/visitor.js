@@ -81,7 +81,7 @@ import {
   REACT_CONSUMER_TYPE
 } from './symbols'
 
-import { isClientReference } from './utils'
+import { isClientReference, isReact19 } from './utils'
 
 const REACT_INTERNALS =
   (React: any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED ||
@@ -95,7 +95,7 @@ const getReactCurrentDispatcher = () => {
 }
 
 const injectReactCurrentDispatcher = (newDispatcher) => {
-  if (ReactCurrentDispatcher.current) {
+  if (!isReact19()) {
     ReactCurrentDispatcher.current = newDispatcher
   } else {
     ReactCurrentDispatcher.H = newDispatcher
