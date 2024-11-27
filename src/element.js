@@ -20,6 +20,7 @@ import {
   REACT_LAZY_TYPE,
   REACT_CONSUMER_TYPE
 } from './symbols'
+import { isReact19 } from './utils'
 
 /** Is a given Component a class component */
 export const shouldConstruct = (Comp: ComponentType<*>): boolean %checks =>
@@ -53,6 +54,7 @@ export const typeOf = (x: AbstractElement): ReactSymbol | void => {
             case REACT_CONSUMER_TYPE:
               return REACT_CONSUMER_TYPE
             case REACT_CONTEXT_TYPE:
+              return isReact19() ? REACT_PROVIDER_TYPE : REACT_CONSUMER_TYPE
             case REACT_PROVIDER_TYPE:
               return REACT_PROVIDER_TYPE
             case REACT_FORWARD_REF_TYPE:
