@@ -15,7 +15,8 @@ import {
   REACT_SUSPENSE_TYPE,
   REACT_MEMO_TYPE,
   REACT_LAZY_TYPE,
-  REACT_CONSUMER_TYPE
+  REACT_CONSUMER_TYPE,
+  REACT_TRANSITIONAL_ELEMENT_TYPE
 } from '../symbols'
 
 export type AbstractContext = Context<mixed> & {
@@ -37,6 +38,10 @@ export type ComponentStatics = {
   defaultProps?: Object
 }
 
+type ElementTypeof =
+  | typeof REACT_ELEMENT_TYPE
+  | typeof REACT_TRANSITIONAL_ELEMENT_TYPE
+
 /** <Context.Consumer> */
 export type ConsumerElement = {
   type:
@@ -46,7 +51,7 @@ export type ConsumerElement = {
         _context: AbstractContext
       },
   props: { children?: (value: mixed) => Node },
-  $$typeof: typeof REACT_ELEMENT_TYPE
+  $$typeof: ElementTypeof
 }
 
 /** <Context.Provider> */
@@ -56,14 +61,14 @@ export type ProviderElement = {
     _context: AbstractContext
   },
   props: DefaultProps & { value: mixed },
-  $$typeof: typeof REACT_ELEMENT_TYPE
+  $$typeof: ElementTypeof
 }
 
 /** <Suspense> */
 export type SuspenseElement = {
   type: typeof REACT_SUSPENSE_TYPE,
   props: DefaultProps & { fallback?: Node },
-  $$typeof: typeof REACT_ELEMENT_TYPE
+  $$typeof: ElementTypeof
 }
 
 /** <ConcurrentMode>, <Fragment>, <Profiler>, <StrictMode> */
@@ -74,7 +79,7 @@ export type FragmentElement = {
     | typeof REACT_PROFILER_TYPE
     | typeof REACT_STRICT_MODE_TYPE,
   props: DefaultProps,
-  $$typeof: typeof REACT_ELEMENT_TYPE
+  $$typeof: ElementTypeof
 }
 
 type LazyComponentUninitialized = {
@@ -131,7 +136,7 @@ export type MemoElement = {
     $$typeof: typeof REACT_MEMO_TYPE
   },
   props: DefaultProps,
-  $$typeof: typeof REACT_ELEMENT_TYPE
+  $$typeof: ElementTypeof
 }
 
 /** <React.forwardRef(Comp)> */
@@ -145,7 +150,7 @@ export type ForwardRefElement = {
     target?: ComponentType<mixed> | string
   },
   props: DefaultProps,
-  $$typeof: typeof REACT_ELEMENT_TYPE
+  $$typeof: ElementTypeof
 }
 
 /** Portal */
@@ -159,20 +164,20 @@ export type PortalElement = {
 export type UserElement = {
   type: ComponentType<DefaultProps> & ComponentStatics,
   props: DefaultProps,
-  $$typeof: typeof REACT_ELEMENT_TYPE
+  $$typeof: ElementTypeof
 }
 
 export type ClientReferenceElement = {
   type: ClientReference,
   props: DefaultProps,
-  $$typeof: typeof REACT_ELEMENT_TYPE
+  $$typeof: ElementTypeof
 }
 
 /** <div /> */
 export type DOMElement = {
   type: string,
   props: DefaultProps,
-  $$typeof: typeof REACT_ELEMENT_TYPE
+  $$typeof: ElementTypeof
 }
 
 /** This is like React.Element<any> but with specific symbol fields */
