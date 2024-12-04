@@ -85,7 +85,9 @@ import { isClientReference, isReact19 } from './utils'
 
 const REACT_INTERNALS =
   (React: any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED ||
-  (React: any).__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE
+  (React: any)
+    .__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE ||
+  (React: any).__SERVER_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE
 
 const ReactCurrentDispatcher =
   REACT_INTERNALS.ReactCurrentDispatcher || REACT_INTERNALS
