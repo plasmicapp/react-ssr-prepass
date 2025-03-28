@@ -14,5 +14,5 @@ declare module '@plasmicapp/react-ssr-prepass' {
     clientRefVisitor?: ClientReferenceVisitor
   ): Promise<void>
 
-  export = ssrPrepass
+  export default ssrPrepass
 }
